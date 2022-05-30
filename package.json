@@ -1,13 +1,12 @@
 {
-  "name": "fastbull-contract",
+  "name": "knwin-contract",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "deploy:localhost": "npx hardhat run scripts/deploy.js --network localhost",
     "deploy:rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby",
     "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
-    "verify:rinkeby": "npx hardhat verify 0xd7f2BB4353c2612823597FE04E3d8FD58d87B47B 'ipfs://QmbyUfWA5fuedutDAJ5CPs4ujVAfhPhn2Hi1URhAPwYJM7/' --network rinkeby",
+    "verify:rinkeby": "npx hardhat verify 0x3b55496A9027566B87c834977A6b9074CF4Bd9BE 'ipfs://QmbyUfWA5fuedutDAJ5CPs4ujVAfhPhn2Hi1URhAPwYJM7/' --network rinkeby",
     "verify:mainnet": "npx hardhat verify YOUR_CONTRACT 'YOUR_IPFS_URL' --network mainnet"
   },
   "keywords": [],
@@ -26,7 +25,7 @@
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@openzeppelin/contracts": "^4.5.0",
-    "erc721a": "^3.0.0",
     "hardhat-gas-reporter": "^1.0.8"
-  }
+  },
+  "description": ""
 }

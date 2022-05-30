@@ -14,15 +14,15 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const FBNFT = await hre.ethers.getContractFactory('FBNFT');
+  const KnwinClub = await hre.ethers.getContractFactory('KnwinClub');
   // 替换成你的盲盒 ipfs 地址
-  const fbnft = await FBNFT.deploy(
-    'ipfs://QmbyUfWA5fuedutDAJ5CPs4ujVAfhPhn2Hi1URhAPwYJM7/'
+  const deployName = await KnwinClub.deploy(
+    'ipfs://QmXUTjiTsFksGYp1GZdBdDYpwXeTFDVobuSiHACf72Z2A9/'
   );
 
-  await fbnft.deployed();
+  await deployName.deployed();
 
-  console.log('Deployed to:', fbnft.address);
+  console.log('Deployed to:', deployName.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

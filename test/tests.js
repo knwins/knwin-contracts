@@ -6,10 +6,10 @@ describe('contract test', function () {
   let hardhatToken;
   let owner;
   let addr1;
-  const baseURI = 'ipfs://QmYdoCeWfvgZVwyEJfFM537qWnM21qoWU64ihBZx9nLcyx';
+  const baseURI = 'ipfs://QmXUTjiTsFksGYp1GZdBdDYpwXeTFDVobuSiHACf72Z2A9';
 
   beforeEach(async function () {
-    Token = await ethers.getContractFactory('GCLX');
+    Token = await ethers.getContractFactory('KnwinClub');
     [owner, addr1] = await ethers.getSigners();
 
     hardhatToken = await Token.deploy(baseURI);
