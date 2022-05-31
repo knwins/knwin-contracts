@@ -19,6 +19,7 @@ contract KnwinClub is ERC721Optimized, Ownable, ReentrancyGuard {
     Status public status;
     using   Strings for uint256;
     uint256 public constant MAX_SUPPLY = 1000;
+    uint256 public maxSupplyWhitlist = 200;
     uint256 public maxPurchaseWL = 1;
     uint256 public maxPurchasePS = 2; //public sale max purchase
 
@@ -27,10 +28,8 @@ contract KnwinClub is ERC721Optimized, Ownable, ReentrancyGuard {
     string  public baseURI;
 
     event Minted(address indexed mintAddress, uint256 indexed tokenId);
-    event PermanentURI(string _value, uint256 indexed _id);
     event StatusChanged(Status status);
     event BaseURIChanged(string newBaseURI);
-    event MerkleRootSet(bytes32 _merkleRoot);
 
     constructor(string memory initBaseURI) ERC721Optimized("KnwinClub", "KNC") {
         baseURI = initBaseURI;
@@ -43,17 +42,11 @@ contract KnwinClub is ERC721Optimized, Ownable, ReentrancyGuard {
         }
     }
 
-
     function withdraw() public onlyOwner {
         require(address(this).balance > 0, "Insufficient balance");
         Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
-
-    function withdrawTo(uint256 amount, address payable to) public onlyOwner {
-        require(address(this).balance > 0, "Insufficient balance");
-        Address.sendValue(to, amount);
-    }
 
     function setStatus(Status _status) public onlyOwner {
         status = _status;
@@ -84,49 +77,52 @@ contract KnwinClub is ERC721Optimized, Ownable, ReentrancyGuard {
 
     function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner {
         merkleRoot = _merkleRoot;
-        emit MerkleRootSet(merkleRoot);
     }
 
     mapping(address => bool) whitelistClaimed;
     mapping(address => uint256) whitelistMintedNFTs;
- 
+
     function whitelistMint(uint256 numberOfTokens,bytes32[] calldata _merkleProof) public payable nonReentrant{
 
-     //check status
-     require(status == Status.Whitelist,"Whitelist sale is not live");
+       //check status
+       require(status == Status.Whitelist,"Whitelist sale is not live");
 
-     //check whitelistClaimed
-     require(!whitelistClaimed[msg.sender],"Your whitelist entry has already been claimed");
+       //check whitelistClaimed
+       require(!whitelistClaimed[msg.sender],"Your whitelist entry has already been claimed");
 
-    //check maxPurchaseWL
-     require(numberOfTokens <= maxPurchaseWL, "You whitelist can't mint that many NFTs");
+       //check maxPurchaseWL
+       require(numberOfTokens <= maxPurchaseWL, "You whitelist can't mint that many NFTs");
 
-     //check Max_SUPPLE
-     require((totalSupply() + numberOfTokens) <= MAX_SUPPLY, "Total supply has been reached");
+       //check Max_SUPPLE
+       require((totalSupply() + numberOfTokens) <= MAX_SUPPLY, "Total supply has been reached");
 
-     //check ETH Balance
-     require(mintPriceWL * numberOfTokens <= msg.value, "Not enough ETH");
+       //check maxSupplyWhitlist
+       require(maxSupplyWhitlist >= numberOfTokens, "reached max amount");
 
-     //check owner minted number
-     require((whitelistMintedNFTs[msg.sender] + numberOfTokens) <= maxPurchaseWL,"You whitelist has mint max NFTs");
+       //check ETH Balance
+       require(mintPriceWL * numberOfTokens <= msg.value, "Not enough ETH");
 
-     whitelistMintedNFTs[msg.sender] += numberOfTokens;
+       //check owner minted number
+       require((whitelistMintedNFTs[msg.sender] + numberOfTokens) <= maxPurchaseWL,"You whitelist has mint max NFTs");
 
-     //check is whitelist
-     bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-     require(MerkleProof.verify(_merkleProof, merkleRoot, leaf),"Oops, can't find you on the whitelist");
+       whitelistMintedNFTs[msg.sender] += numberOfTokens;//1 write
 
-     for (uint256 i = 0; i < numberOfTokens; i++) {
-        createCollectible(_msgSender());
+       //check is whitelist
+       bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+       require(MerkleProof.verify(_merkleProof, merkleRoot, leaf),"Oops, can't find you on the whitelist");
+
+       for (uint256 i = 0; i < numberOfTokens; i++) {
+        createCollectible(_msgSender()); //2 write
     }
 
-
+    maxSupplyWhitlist-=numberOfTokens; //3 write
 }
 
-//save mintedNfts
-mapping(address => uint256) publicSaleMintedNFTs;
 
-function mint(uint256 numberOfTokens) public payable nonReentrant {
+
+//publicSaleMint
+mapping(address => uint256) publicSaleMintedNFTs;
+function publicSaleMint(uint256 numberOfTokens) public payable nonReentrant {
 
     //check status
     require(status == Status.PublicSale, "Public sale is not live");
@@ -152,11 +148,6 @@ function mint(uint256 numberOfTokens) public payable nonReentrant {
 }
 
 
-//burn
-function burnNFT(uint256 tokenId)public payable nonReentrant {
-_burn(tokenId);
-}
-
 //get owner whitelist minted number
 function whitelistMinteds(address owner) public view returns (uint256) {
     return whitelistMintedNFTs[owner];
@@ -173,12 +164,6 @@ function createCollectible(address mintAddress) private {
         _safeMint(mintAddress, mintIndex);
         emit Minted(mintAddress, mintIndex);
     }
-}
-
-function freezeMetadata(uint256 tokenId, string memory ipfsHash) public {
-    require(_exists(tokenId), "ERC721: operator query for nonexistent token");
-    require(_msgSender() == ERC721Optimized.ownerOf(tokenId), "Caller is not a token owner");
-    emit PermanentURI(ipfsHash, tokenId);
 }
 
 function _baseURI() internal view virtual returns (string memory) {
