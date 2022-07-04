@@ -14,10 +14,10 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const KnwinClub = await hre.ethers.getContractFactory('KnwinClub');
+  const nftFile = await hre.ethers.getContractFactory('Uzuki');
   // 替换成你的盲盒 ipfs 地址
-  const deployName = await KnwinClub.deploy(
-    'ipfs://QmXUTjiTsFksGYp1GZdBdDYpwXeTFDVobuSiHACf72Z2A9/'
+  const deployName = await nftFile.deploy(
+    'ipfs://QmQ4GyC93gmrkVdtfyJ849XGo5Xoe3cqcLtJAU58cMMkqv/'
   );
 
   await deployName.deployed();
