@@ -1,0 +1,43 @@
+{
+  "name": "rzuki-contract",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "deploy:localhost": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby",
+    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
+    "verify:rinkeby": "npx hardhat verify 0x3b55496A9027566B87c834977A6b9074CF4Bd9BE 'ipfs://QmbyUfWA5fuedutDAJ5CPs4ujVAfhPhn2Hi1URhAPwYJM7/' --network rinkeby",
+    "verify:mainnet": "npx hardhat verify YOUR_CONTRACT 'YOUR_IPFS_URL' --network mainnet"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "dotenv": "^16.0.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.4",
+    "hardhat": "^2.9.9",
+    "hardhat-deploy": "^0.10.5",
+    "tailwindcss": "^3.1.4"
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-etherscan": "^3.0.3",
+    "@openzeppelin/contracts": "^4.5.0",
+    "hardhat-gas-reporter": "^1.0.8"
+  },
+  "description": "`npx hardhat compile`",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knwins/rzuki-contracts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/knwins/rzuki-contracts/issues"
+  },
+  "homepage": "https://github.com/knwins/rzuki-contracts#readme"
+}
